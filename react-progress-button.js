@@ -19,8 +19,7 @@
       onError: React.PropTypes.func,
       onSuccess: React.PropTypes.func,
       state: React.PropTypes.string,
-      type: React.PropTypes.string,
-      shouldAllowClickOnLoading: React.PropTypes.bool,
+      type: React.PropTypes.string
     },
 
     getDefaultProps: function() {
@@ -28,10 +27,7 @@
         classNamespace: 'pb-',
         durationError: 1200,
         durationSuccess: 500,
-        onClick: function() {},
-        onError: function() {},
-        onSuccess: function() {},
-        shouldAllowClickOnLoading: false,
+        onClick: function() {}
       };
     },
 
@@ -44,7 +40,7 @@
     render: function() {
       return (
         React.createElement("div", {className: this.props.classNamespace + "container " + this.state.currentState,
-          onClick: this.handleClick},
+          onClick: this.props.onClick},
           React.createElement("button", {type: this.props.type, form: this.props.form,
             className: this.props.classNamespace + "button"},
             React.createElement("span", null, this.props.children),
@@ -69,14 +65,6 @@
       );
     },
 
-    handleClick: function(e) {
-      if (this.props.shouldAllowClickOnLoading || this.state.currentState !== 'loading') {
-        this.props.onClick(e);
-      } else {
-        e.preventDefault();
-      }
-    },
-
     loading: function() {
       this.setState({currentState: 'loading'});
     },
@@ -85,13 +73,16 @@
       this.setState({currentState: ''});
     },
 
-    success: function(callback, dontRemove) {
+    success: function(callback, remove) {
       this.setState({currentState: 'success'});
       this._timeout = setTimeout(function() {
         callback = callback || this.props.onSuccess;
-        callback();
-        if (dontRemove === true) { return; }
-        this.setState({currentState: ''});
+        if (callback && typeof callback === "function") {
+          callback();
+          if (remove) { this.setState({currentState: ''}); }
+        } else {
+          this.setState({currentState: ''});
+        }
       }.bind(this), this.props.durationSuccess);
     },
 
@@ -99,7 +90,9 @@
       this.setState({currentState: 'error'});
       this._timeout = setTimeout(function() {
         callback = callback || this.props.onError;
-        callback();
+        if (callback && typeof callback === "function") {
+          callback();
+        }
         this.setState({currentState: ''});
       }.bind(this), this.props.durationError);
     },

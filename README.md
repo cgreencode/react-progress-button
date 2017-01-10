@@ -44,9 +44,9 @@ const App = React.createClass({
   handleClick () {
     this.setState({buttonState: 'loading'})
     // make asynchronous call
-    setTimeout(function() {
+    setTimeout(() => {
       this.setState({buttonState: 'success'})
-    }.bind(this), 3000)
+    }, 3000)
   }
 })
 ```
@@ -155,7 +155,7 @@ Put the button in the success state. Call the callback or the onSuccess prop whe
 
 ##### error([callback])
 
-Put the button in the error state. Call the callback or the onSuccess prop when going back to the normal state.
+Put the button in the error state. Call the callback or the onError prop when going back to the normal state.
 
 ## Styles
 
